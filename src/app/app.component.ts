@@ -8,25 +8,27 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Gerando valor por extenso';
   unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove' ];
-  dezenas = ['', '', 'veinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+  dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
   centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrozentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
   doDezAoDezenove = ['dez','onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
   valorNumerico: number = 0
   valueString: any = '' 
   
-  convertirMilhoes (num) {
+  convertirMilhoes (num, mil:boolean) {
     this.valorNumerico = num
+    let milhoesString: string = (num % 1000000) == 0 ? ' milhões de' : ' milhões ';
     if(num >= 1000000) {
       if(num >= 1000000 && num < 2000000){
         return "um milhão " + this.convertirMilhoes(num % 1000000)
       }else{
-        return this.convertirMilhoes(Math.floor(num / 1000000), true) + " milhões " + this.convertirMiles(num % 1000000)
+        console.log('Paso 1')
+        return this.convertirMilhoes(Math.floor(num / 1000000), true) + milhoesString + this.convertirMiles(num % 1000000)
       }  
     }else{
       if(num > 1000){
         return this.convertirMiles(num, true);
       }else if( num < 1000){
-        return this.convertirMiles(num, false);
+        return this.convertirMiles(num, mil);
       }
       
     }
@@ -36,14 +38,14 @@ export class AppComponent {
     mil = mil || false
     if(num >= 1000){
       if( num >= 1000 && num < 2000){
-        return "mil " + this.convertirCentos(num % 1000, mil)
+        return "mil " + this.convertirCentos(num % 1000, false)
       }else{
         if(num >= 2000 && num < 10000){
-          return this.unidades[Math.floor(num / 1000)] + " mil " + this.convertirCentos(num % 1000, mil)
+          return this.unidades[Math.floor(num / 1000)] + " mil " + this.convertirCentos(num % 1000, false)
         }else if(num >= 10000 && num < 20000){
-          return this.doDezAoDezenove[(Math.floor(num / 1000)) - 10] + " mil " + this.convertirCentos(num % 1000, mil)
+          return this.doDezAoDezenove[(Math.floor(num / 1000)) - 10] + " mil " + this.convertirCentos(num % 1000, false)
         }else{
-          return this.convertirCentos(Math.floor(num / 1000), true) + " mil " + this.convertirCentos(num % 1000, mil)
+          return this.convertirCentos(Math.floor(num / 1000), true) + " mil " + this.convertirCentos(num % 1000, false)
         }
       }
     }else{
@@ -88,12 +90,8 @@ export class AppComponent {
 
   convertirCentavos (num, mil:boolean) {
     num = Math.round(num * 100) / 100
-    let reaisString: string = ''
-    if(this.valorNumerico < 2){
-      reaisString = " real"
-    }else{
-      reaisString = " reais"
-    }
+    let reaisString: string = this.valorNumerico < 2 ? " real" : " reais";
+
     if(num > 0 && num < 1){
       if((num * 100) < 10){
         return reaisString + " e " + this.unidades[num * 100] + " centavos"

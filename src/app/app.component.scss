@@ -5,6 +5,9 @@
     img{
       width: 100%;
       height: auto;
+      @media(max-width: 767px){
+        height: 300px;
+      }
     }
   }
   .input-row, .output-row{
@@ -14,11 +17,26 @@
     top: 30px;
     right: 30px;
     width: 100%;
+    @media(max-width: 767px){
+      right: 15px
+    }
   }
   .output-row{
-    bottom: 200px;
+    
     left: 45px;
     width: calc(100% - 60px);
     border-bottom: 2px solid #3a4f6c;
+    @media(max-width: 767px){
+      bottom: 65px;
+    }
+    @media (min-width: 768px) and (max-width: 991px){
+      bottom: 100px;
+    }
+    @media(min-width: 992px) and (max-width: 1199px){
+      bottom: 150px;
+    }
+    @media (min-width: 1200px){
+      bottom: 200px;
+    }
   }
 }
