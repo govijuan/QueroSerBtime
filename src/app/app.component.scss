@@ -1,0 +1,24 @@
+.cheque-wrap{
+  position: relative;
+  .cheque-image-wrap{
+    position: relative;
+    img{
+      width: 100%;
+      height: auto;
+    }
+  }
+  .input-row, .output-row{
+    position: absolute;
+  }
+  .input-row{
+    top: 30px;
+    right: 30px;
+    width: 100%;
+  }
+  .output-row{
+    bottom: 200px;
+    left: 45px;
+    width: calc(100% - 60px);
+    border-bottom: 2px solid #c2c2c2;
+  }
+}

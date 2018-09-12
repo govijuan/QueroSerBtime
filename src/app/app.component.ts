@@ -6,18 +6,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
+  title = 'Gerando valor por extenso';
   unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove' ];
   dezenas = ['', '', 'veinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
   centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrozentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
   doDezAoDezenove = ['dez','onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+  valorNumerico: number = 0
+  valueString: string = '' 
   
   convertirMilhoes (num) {
     if(num >= 1000000) {
       if(num >= 1000000 && num < 2000000){
         return "um milhão " + this.convertirMilhoes(num % 1000000)
       }else{
-        return this.convertMilhoes(Math.floor(num / 1000000)) + " milhões " + this.convertirMiles(num % 1000000)
+        return this.convertirMilhoes(Math.floor(num / 1000000)) + " milhões " + this.convertirMiles(num % 1000000)
       }  
     }else{
       return this.convertirMiles(num);
@@ -27,12 +29,12 @@ export class AppComponent {
   convertirMiles (num) {
     if(num >= 1000){
       if( num >= 1000 && num < 2000){
-        return "mil " + this.convertCentos(num % 1000)
+        return "mil " + this.convertirCentos(num % 1000)
       }else{
-        return this.convertirCentos(Math.floor(num / 1000)) + " mil " + convertirCentos(num % 1000)
+        return this.convertirCentos(Math.floor(num / 1000)) + " mil " + this.convertirCentos(num % 1000)
       }
     }else{
-      return this.convertCentos(num)
+      return this.convertirCentos(num)
     }
   }
 
@@ -41,7 +43,11 @@ export class AppComponent {
         if( num == 100){
           return " cem "
         }else{
-          return this.centenas[Math.floor(num / 100)] + " e " + this.convertirDezenas( num % 100)
+          if(Math.floor(num % 100) === 0 ){
+            return this.centenas[Math.floor(num / 100)] + this.convertirCentavos(num % 100)
+          }else{
+            return this.centenas[Math.floor(num / 100)] + " e " + this.convertirDezenas( num % 100)
+          }
         }
     }else{
       return this.convertirDezenas(num)
@@ -49,17 +55,36 @@ export class AppComponent {
   }
   convertirDezenas (num) {
     if(num < 10){
-      return unidades[Math.floor(num / 1)] + this.convertirCentavos(num % 1)
+      return this.unidades[Math.floor(num / 1)] + this.convertirCentavos(num % 1)
     }else if(num >= 10 && num < 20 ){
       return this.doDezAoDezenove[Math.floor((num - 10) / 1)] + this.convertirCentavos(num % 1)
     }else{
-      return this.dezenas[Math.floor(num / 10)] + " e " + this.unidades[num % 10]
+      if((num % 10) != 0 && (num % 10) < 1){
+        if(Math.floor(num % 10) == 0){
+          return this.dezenas[Math.floor(num / 10)] + this.convertirCentavos(num % 1);
+        }else{
+          return this.dezenas[Math.floor(num / 10)] + " e " + this.unidades[Math.floor(num % 10)] + this.convertirCentavos(num % 1)
+        }
+      }else{
+        return this.dezenas[Math.floor(num / 10)]  + this.convertirCentavos(num % 1)
+      }
+      
     }
   }
 
   convertirCentavos (num) {
     if(num > 0 && num < 1){
-      return " reais  e " + this.convertirDezenas(num * 100) + centavos
+      if((num * 100) < 10){
+        return " reais e " + this.unidades[num * 100] + " centavos"
+      }else if((num * 100) >= 10 && (num * 100) < 20){
+        return " reais e " + this.doDezAoDezenove[num * 100] + " centavos"
+      }else{
+        if(((num * 100) % 10) != 0){
+          return " reais e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.floor((num *100) % 10)] + " centavos"
+        }else{
+          return " reais e " + this.dezenas[Math.floor(num * 10)] + " centavos"
+        }
+      }
     }else if(num === 0){
       return " reais"
     }
@@ -71,5 +96,10 @@ export class AppComponent {
     }else{
       return this.convertirMilhoes(num)
     }
+  }
+
+  definirValorExtenso (numericValue) {
+    console.log(numericValue);
+    this.valueString = this.convertir(numericValue);
   }
 }
