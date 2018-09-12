@@ -29,50 +29,60 @@ export class AppComponent {
   convertirMiles (num) {
     if(num >= 1000){
       if( num >= 1000 && num < 2000){
-        return "mil " + this.convertirCentos(num % 1000)
+        return "mil " + this.convertirCentos(num % 1000, false)
       }else{
-        return this.convertirCentos(Math.floor(num / 1000)) + " mil " + this.convertirCentos(num % 1000)
+        if(num >= 2000 && num < 10000){
+          return this.unidades[Math.floor(num / 1000)] + " mil " + this.convertirCentos(num % 1000, false)
+        }else if(num >= 10000 && num < 20000){
+          return this.doDezAoDezenove[(Math.floor(num / 1000)) - 10] + " mil " + this.convertirCentos(num % 1000, false)
+        }else{
+          console.log( "paso 1");
+          return this.convertirCentos(Math.floor(num / 1000), true) + " mil " + this.convertirCentos(num % 1000, false)
+        }
       }
     }else{
-      return this.convertirCentos(num)
+      return this.convertirCentos(num, false)
     }
   }
 
-  convertirCentos (num) {
+  convertirCentos (num, mil:boolean) {
     if(num > 99){
         if( num == 100){
           return " cem "
         }else{
           if(Math.floor(num % 100) === 0 ){
-            return this.centenas[Math.floor(num / 100)] + this.convertirCentavos(num % 100)
+            return this.centenas[Math.floor(num / 100)] + this.convertirCentavos(num % 100, mil)
           }else{
-            return this.centenas[Math.floor(num / 100)] + " e " + this.convertirDezenas( num % 100)
+            return this.centenas[Math.floor(num / 100)] + " e " + this.convertirDezenas( num % 100, mil)
           }
         }
     }else{
+      console.log('Paso 2')
       return this.convertirDezenas(num)
     }
   }
-  convertirDezenas (num) {
+  convertirDezenas (num, mil:boolean) {
     if(num < 10){
-      return this.unidades[Math.floor(num / 1)] + this.convertirCentavos(num % 1)
+      return this.unidades[Math.floor(num / 1)] + this.convertirCentavos(num % 1, mil)
     }else if(num >= 10 && num < 20 ){
-      return this.doDezAoDezenove[Math.floor((num - 10) / 1)] + this.convertirCentavos(num % 1)
+      return this.doDezAoDezenove[Math.floor((num - 10) / 1)] + this.convertirCentavos(num % 1, mil)
     }else{
-      if((num % 10) != 0 && (num % 10) < 1){
-        if(Math.floor(num % 10) == 0){
-          return this.dezenas[Math.floor(num / 10)] + this.convertirCentavos(num % 1);
+      console.log('Paso 3')
+      if((num % 10) != 0){
+        if((num % 10) > 0 && (num % 10) < 1){
+          return this.dezenas[Math.floor(num / 10)] + this.convertirCentavos(num % 1, mil);
         }else{
-          return this.dezenas[Math.floor(num / 10)] + " e " + this.unidades[Math.floor(num % 10)] + this.convertirCentavos(num % 1)
+          return this.dezenas[Math.floor(num / 10)] + " e " + this.unidades[Math.floor(num % 10)] + this.convertirCentavos(num % 1, mil)
         }
       }else{
-        return this.dezenas[Math.floor(num / 10)]  + this.convertirCentavos(num % 1)
+        console.log('Paso 4')
+        return this.dezenas[Math.floor(num / 10)]  + this.convertirCentavos(num % 1, mil)
       }
       
     }
   }
 
-  convertirCentavos (num) {
+  convertirCentavos (num, mil:boolean) {
     if(num > 0 && num < 1){
       if((num * 100) < 10){
         return " reais e " + this.unidades[num * 100] + " centavos"
@@ -80,13 +90,15 @@ export class AppComponent {
         return " reais e " + this.doDezAoDezenove[num * 100] + " centavos"
       }else{
         if(((num * 100) % 10) != 0){
-          return " reais e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.floor((num *100) % 10)] + " centavos"
+          return " reais e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.round((num * 100) % 10)] + " centavos"
         }else{
           return " reais e " + this.dezenas[Math.floor(num * 10)] + " centavos"
         }
       }
-    }else if(num === 0){
+    }else if(num === 0 && mil == false){
       return " reais"
+    }else{
+      return ""
     }
   }
   
@@ -99,7 +111,6 @@ export class AppComponent {
   }
 
   definirValorExtenso (numericValue) {
-    console.log(numericValue);
     this.valueString = this.convertir(numericValue);
   }
 }
