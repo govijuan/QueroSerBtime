@@ -12,40 +12,47 @@ export class AppComponent {
   centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrozentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
   doDezAoDezenove = ['dez','onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
   valorNumerico: number = 0
-  valueString: string = '' 
+  valueString: any = '' 
   
   convertirMilhoes (num) {
+    this.valorNumerico = num
     if(num >= 1000000) {
       if(num >= 1000000 && num < 2000000){
         return "um milhão " + this.convertirMilhoes(num % 1000000)
       }else{
-        return this.convertirMilhoes(Math.floor(num / 1000000)) + " milhões " + this.convertirMiles(num % 1000000)
+        return this.convertirMilhoes(Math.floor(num / 1000000), true) + " milhões " + this.convertirMiles(num % 1000000)
       }  
     }else{
-      return this.convertirMiles(num);
+      if(num > 1000){
+        return this.convertirMiles(num, true);
+      }else if( num < 1000){
+        return this.convertirMiles(num, false);
+      }
+      
     }
   }
   
-  convertirMiles (num) {
+  convertirMiles (num, mil:boolean) {
+    mil = mil || false
     if(num >= 1000){
       if( num >= 1000 && num < 2000){
-        return "mil " + this.convertirCentos(num % 1000, false)
+        return "mil " + this.convertirCentos(num % 1000, mil)
       }else{
         if(num >= 2000 && num < 10000){
-          return this.unidades[Math.floor(num / 1000)] + " mil " + this.convertirCentos(num % 1000, false)
+          return this.unidades[Math.floor(num / 1000)] + " mil " + this.convertirCentos(num % 1000, mil)
         }else if(num >= 10000 && num < 20000){
-          return this.doDezAoDezenove[(Math.floor(num / 1000)) - 10] + " mil " + this.convertirCentos(num % 1000, false)
+          return this.doDezAoDezenove[(Math.floor(num / 1000)) - 10] + " mil " + this.convertirCentos(num % 1000, mil)
         }else{
-          console.log( "paso 1");
-          return this.convertirCentos(Math.floor(num / 1000), true) + " mil " + this.convertirCentos(num % 1000, false)
+          return this.convertirCentos(Math.floor(num / 1000), true) + " mil " + this.convertirCentos(num % 1000, mil)
         }
       }
     }else{
-      return this.convertirCentos(num, false)
+      return this.convertirCentos(num, mil)
     }
   }
 
   convertirCentos (num, mil:boolean) {
+    mil = mil || false
     if(num > 99){
         if( num == 100){
           return " cem "
@@ -57,8 +64,7 @@ export class AppComponent {
           }
         }
     }else{
-      console.log('Paso 2')
-      return this.convertirDezenas(num)
+      return this.convertirDezenas(num, mil)
     }
   }
   convertirDezenas (num, mil:boolean) {
@@ -67,7 +73,6 @@ export class AppComponent {
     }else if(num >= 10 && num < 20 ){
       return this.doDezAoDezenove[Math.floor((num - 10) / 1)] + this.convertirCentavos(num % 1, mil)
     }else{
-      console.log('Paso 3')
       if((num % 10) != 0){
         if((num % 10) > 0 && (num % 10) < 1){
           return this.dezenas[Math.floor(num / 10)] + this.convertirCentavos(num % 1, mil);
@@ -75,7 +80,6 @@ export class AppComponent {
           return this.dezenas[Math.floor(num / 10)] + " e " + this.unidades[Math.floor(num % 10)] + this.convertirCentavos(num % 1, mil)
         }
       }else{
-        console.log('Paso 4')
         return this.dezenas[Math.floor(num / 10)]  + this.convertirCentavos(num % 1, mil)
       }
       
@@ -83,20 +87,28 @@ export class AppComponent {
   }
 
   convertirCentavos (num, mil:boolean) {
+    num = Math.round(num * 100) / 100
+    let reaisString: string = ''
+    if(this.valorNumerico < 2){
+      reaisString = " real"
+    }else{
+      reaisString = " reais"
+    }
     if(num > 0 && num < 1){
       if((num * 100) < 10){
-        return " reais e " + this.unidades[num * 100] + " centavos"
+        return reaisString + " e " + this.unidades[num * 100] + " centavos"
       }else if((num * 100) >= 10 && (num * 100) < 20){
-        return " reais e " + this.doDezAoDezenove[num * 100] + " centavos"
+        console.log('Paso 1' + num)
+        return reaisString + " e " + this.doDezAoDezenove[(num * 100)] + " centavos"
       }else{
         if(((num * 100) % 10) != 0){
-          return " reais e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.round((num * 100) % 10)] + " centavos"
+          return reaisString + " e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.round((num * 100) % 10)] + " centavos"
         }else{
-          return " reais e " + this.dezenas[Math.floor(num * 10)] + " centavos"
+          return reaisString + " e " + this.dezenas[Math.floor(num * 10)] + " centavos"
         }
       }
     }else if(num === 0 && mil == false){
-      return " reais"
+        return reaisString
     }else{
       return ""
     }
@@ -106,7 +118,15 @@ export class AppComponent {
     if (num === 0) {
       return "zero"
     }else{
-      return this.convertirMilhoes(num)
+      if(num > 99999999999999){
+        return 'Infelizmente o sistema não foi pensado para preencher  um valor maior a R$ 999.999.999.999,99'
+      }else if(num < 0){
+        return 'O sistema não trabalha com números negativos, e não faz sentido um cheque com números negativos'
+      }else if(num < 1 && num > 0){
+        return 'O sistema não preenche valores inferiores a $R 1,00 pois não faz sentido emitir cheque por um valor inferior a $R 1,00.'
+      }else{
+        return this.convertirMilhoes(num)
+      }
     }
   }
 
