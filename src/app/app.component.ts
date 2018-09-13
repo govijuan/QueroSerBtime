@@ -126,7 +126,7 @@ export class AppComponent {
       }else if(num < 1 && num > 0){
         return 'O sistema não preenche valores inferiores a $R 1,00 pois não faz sentido emitir cheque por um valor inferior a $R 1,00.'
       }else{
-        return this.convertirMilhoes(num, '')
+        return this.convertirMilhoes(num, undefined)
       }
     }
   }
