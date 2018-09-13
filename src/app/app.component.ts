@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
   title = 'Gerando valor por extenso';
   unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove' ];
   dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
@@ -14,15 +15,16 @@ export class AppComponent {
   valorNumerico: number = 0
   valueString: any = '' 
   
-  convertirMilhoes (num, mil:boolean) {
+  convertirMilhoes (num, mil:any) {
+    mil = mil || false
     this.valorNumerico = num
     let milhoesString: string = (num % 1000000) == 0 ? ' milhões de' : ' milhões ';
     if(num >= 1000000) {
       if(num >= 1000000 && num < 2000000){
-        return "um milhão " + this.convertirMilhoes(num % 1000000)
+        return "um milhão " + this.convertirMilhoes(num % 1000000, mil)
       }else{
         console.log('Paso 1')
-        return this.convertirMilhoes(Math.floor(num / 1000000), true) + milhoesString + this.convertirMiles(num % 1000000)
+        return this.convertirMilhoes(Math.floor(num / 1000000), true) + milhoesString + this.convertirMiles(num % 1000000, mil)
       }  
     }else{
       if(num > 1000){
@@ -69,6 +71,7 @@ export class AppComponent {
       return this.convertirDezenas(num, mil)
     }
   }
+
   convertirDezenas (num, mil:boolean) {
     if(num < 10){
       return this.unidades[Math.floor(num / 1)] + this.convertirCentavos(num % 1, mil)
@@ -116,14 +119,14 @@ export class AppComponent {
     if (num === 0) {
       return "zero"
     }else{
-      if(num > 99999999999999){
+      if(num > 999999999.99){
         return 'Infelizmente o sistema não foi pensado para preencher  um valor maior a R$ 999.999.999.999,99'
       }else if(num < 0){
         return 'O sistema não trabalha com números negativos, e não faz sentido um cheque com números negativos'
       }else if(num < 1 && num > 0){
         return 'O sistema não preenche valores inferiores a $R 1,00 pois não faz sentido emitir cheque por um valor inferior a $R 1,00.'
       }else{
-        return this.convertirMilhoes(num)
+        return this.convertirMilhoes(num, '')
       }
     }
   }
