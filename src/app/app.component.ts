@@ -15,7 +15,7 @@ export class AppComponent {
   valorNumerico: number = 0
   valueString: any = '' 
   
-  convertirMilhoes (num, mil:any) {
+  convertirMilhoes (num, mil?:boolean) {
     mil = mil || false
     this.valorNumerico = num
     let milhoesString: string = (num % 1000000) == 0 ? ' milhões de' : ' milhões ';
@@ -94,13 +94,11 @@ export class AppComponent {
   convertirCentavos (num, mil:boolean) {
     num = Math.round(num * 100) / 100
     let reaisString: string = this.valorNumerico < 2 ? " real" : " reais";
-
     if(num > 0 && num < 1){
       if((num * 100) < 10){
         return reaisString + " e " + this.unidades[num * 100] + " centavos"
       }else if((num * 100) >= 10 && (num * 100) < 20){
-        console.log('Paso 1' + num)
-        return reaisString + " e " + this.doDezAoDezenove[(num * 100)] + " centavos"
+        return reaisString + " e " + this.doDezAoDezenove[(num * 100) - 10] + " centavos"
       }else{
         if(((num * 100) % 10) != 0){
           return reaisString + " e " + this.dezenas[Math.floor(num * 10)] + " e "  + this.unidades[Math.round((num * 100) % 10)] + " centavos"
@@ -126,7 +124,7 @@ export class AppComponent {
       }else if(num < 1 && num > 0){
         return 'O sistema não preenche valores inferiores a $R 1,00 pois não faz sentido emitir cheque por um valor inferior a $R 1,00.'
       }else{
-        return this.convertirMilhoes(num, undefined)
+        return this.convertirMilhoes(num)
       }
     }
   }
