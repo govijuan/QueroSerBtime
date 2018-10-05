@@ -15,8 +15,7 @@ export class AppComponent {
   valorNumerico: number = 0
   valueString: any = '' 
   
-  convertirMilhoes (num, mil?:boolean) {
-    mil = mil || false
+  convertirMilhoes (num, mil:boolean = false) {
     this.valorNumerico = num
     let milhoesString: string = (num % 1000000) == 0 ? ' milhões de' : ' milhões ';
     if(num >= 1000000) {
@@ -27,7 +26,7 @@ export class AppComponent {
         return this.convertirMilhoes(Math.floor(num / 1000000), true) + milhoesString + this.convertirMiles(num % 1000000, mil)
       }  
     }else{
-      if(num > 1000){
+      if(num >= 1000){
         return this.convertirMiles(num, true);
       }else if( num < 1000){
         return this.convertirMiles(num, mil);
@@ -36,8 +35,8 @@ export class AppComponent {
     }
   }
   
-  convertirMiles (num, mil:boolean) {
-    mil = mil || false
+  convertirMiles (num, mil:boolean = false) {
+    
     if(num >= 1000){
       if( num >= 1000 && num < 2000){
         return "mil " + this.convertirCentos(num % 1000, false)
@@ -55,11 +54,10 @@ export class AppComponent {
     }
   }
 
-  convertirCentos (num, mil:boolean) {
-    mil = mil || false
+  convertirCentos (num, mil:boolean = false) {
     if(num > 99){
         if( num == 100){
-          return " cem "
+          return " cem reais"
         }else{
           if(Math.floor(num % 100) === 0 ){
             return this.centenas[Math.floor(num / 100)] + this.convertirCentavos(num % 100, mil)
@@ -93,7 +91,7 @@ export class AppComponent {
 
   convertirCentavos (num, mil:boolean) {
     num = Math.round(num * 100) / 100
-    let reaisString: string = this.valorNumerico < 2 ? " real" : " reais";
+    let reaisString: string = this.valorNumerico < 2 && mil == false ? " real" : " reais";
     if(num > 0 && num < 1){
       if((num * 100) < 10){
         return reaisString + " e " + this.unidades[num * 100] + " centavos"
